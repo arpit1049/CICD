@@ -1,0 +1,30 @@
+name: Create QMetry Test Cycle
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  create-testcycle:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Call QMetry API to create Test Cycle
+        env:
+          API_KEY: ${{ secrets.QMETRY_API_KEY }}
+        run: |
+          curl --location 'https://qtmcloud.qmetry.com/rest/api/latest/testcycles' \
+          --header 'Accept: application/json' \
+          --header "apiKey: $API_KEY" \
+          --header 'Content-Type: application/json' \
+          --data '{
+            "projectId": 10001,
+            "summary": "test case from cycle: $testcycle.key (desc - all parameters)",
+            "description": "KEY = $testcycle.key",
+            "folderId": -1
+          }'
